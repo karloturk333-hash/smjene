@@ -1,0 +1,186 @@
+:root {
+  --bg: #f5f7f8;
+  --surface: #ffffff;
+  --surface-2: #eef1f3;
+  --border: #e2e6e9;
+  --text: #18222b;
+  --muted: #5b6671;
+  --primary: #0e8a6e;
+  --primary-strong: #0b6f59;
+  --on-primary: #ffffff;
+  --danger: #c0392b;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.05), 0 1px 3px rgba(16, 24, 40, 0.06);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); }
+#root { min-height: 100vh; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; }
+
+.container { width: 100%; max-width: 860px; margin: 0 auto; padding: 0 20px; }
+
+/* Header */
+.app-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.app-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+.brand { display: inline-flex; align-items: center; gap: 12px; }
+.brand__mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: var(--on-primary);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+.brand strong { display: block; font-size: 17px; line-height: 1.1; }
+.brand__sub { display: block; font-size: 12px; color: var(--muted); }
+.nav { display: flex; align-items: center; gap: 14px; }
+.nav__link { font-weight: 600; color: var(--muted); }
+
+.app-main { padding: 28px 0 64px; }
+.stack { display: flex; flex-direction: column; gap: 20px; }
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.page-title { font-size: 26px; font-weight: 700; margin: 0; }
+.section-title { font-size: 18px; font-weight: 700; margin: 0; }
+.muted { color: var(--muted); }
+.error { color: var(--danger); margin: 0; }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+.btn:hover { background: var(--surface-2); }
+.btn--primary { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+.btn--primary:hover { background: var(--primary-strong); }
+.btn--ghost { background: transparent; }
+.btn--danger { color: var(--danger); border-color: transparent; background: transparent; }
+.btn--danger:hover { background: rgba(192, 57, 43, 0.08); }
+.btn--sm { height: 34px; padding: 0 12px; font-size: 14px; }
+.btn:disabled { opacity: 0.6; cursor: default; }
+
+/* Segmented control */
+.segmented { display: inline-flex; background: var(--surface-2); border-radius: 10px; padding: 3px; gap: 2px; }
+.segmented__btn {
+  border: 0;
+  background: transparent;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+.segmented__btn.is-active { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: var(--shadow);
+}
+.stat-card--accent {
+  background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+  border-color: transparent;
+  color: var(--on-primary);
+}
+.stat-card__label { font-size: 13px; font-weight: 600; letter-spacing: 0.02em; opacity: 0.92; }
+.stat-card__value { font-size: 26px; font-weight: 800; line-height: 1.15; }
+.stat-card__sub { font-size: 12px; opacity: 0.85; }
+
+@media (max-width: 640px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-card--accent { grid-column: 1 / -1; }
+}
+
+/* Shift list */
+.shift-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.shift {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  box-shadow: var(--shadow);
+}
+.shift__main { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex: 1; min-width: 0; }
+.shift__date { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.shift__day { font-weight: 700; }
+.shift__weekday { font-size: 13px; }
+.shift__tips { text-align: right; white-space: nowrap; }
+.shift__amount { display: block; font-weight: 800; font-size: 17px; color: var(--primary-strong); }
+.shift__split { font-size: 12px; }
+.shift__actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+/* Form */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.form { display: flex; flex-direction: column; gap: 16px; max-width: 520px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > span { font-size: 14px; font-weight: 600; color: var(--muted); }
+.field input, .field textarea {
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+}
+.field input:focus, .field textarea:focus { outline: 2px solid var(--primary); outline-offset: 1px; border-color: var(--primary); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
+
+@media (max-width: 560px) {
+  .shift { flex-wrap: wrap; }
+  .shift__main { flex-wrap: wrap; gap: 8px; }
+}

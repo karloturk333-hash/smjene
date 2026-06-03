@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Jedna odrađena smjena konobara s pripadajućim napojnicama.
+model Shift {
+  id        String   @id @default(cuid())
+  /// Datum smjene (početak dana).
+  date      DateTime
+  /// Početak smjene "HH:MM".
+  startTime String
+  /// Kraj smjene "HH:MM".
+  endTime   String
+  /// Trajanje u satima (izračunato na serveru; podržava prekonoćne smjene).
+  hours     Float
+  /// Napojnice u gotovini (EUR).
+  tipsCash  Float    @default(0)
+  /// Napojnice karticom (EUR).
+  tipsCard  Float    @default(0)
+  /// Lokal / restoran (opcionalno).
+  venue     String?
+  /// Bilješka (opcionalno).
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
