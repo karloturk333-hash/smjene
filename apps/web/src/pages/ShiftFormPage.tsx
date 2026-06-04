@@ -8,6 +8,7 @@ interface FormState {
   endTime: string;
   tipsCash: number;
   tipsCard: number;
+  guests: number;
   venue: string;
   note: string;
 }
@@ -20,6 +21,7 @@ const INITIAL: FormState = {
   endTime: "23:00",
   tipsCash: 0,
   tipsCard: 0,
+  guests: 0,
   venue: "",
   note: "",
 };
@@ -44,6 +46,7 @@ export function ShiftFormPage() {
         endTime: s.endTime,
         tipsCash: s.tipsCash,
         tipsCard: s.tipsCard,
+        guests: s.guests,
         venue: s.venue ?? "",
         note: s.note ?? "",
       });
@@ -65,6 +68,7 @@ export function ShiftFormPage() {
       endTime: form.endTime,
       tipsCash: form.tipsCash,
       tipsCard: form.tipsCard,
+      guests: form.guests,
       venue: form.venue.trim() || undefined,
       note: form.note.trim() || undefined,
     };
@@ -114,6 +118,17 @@ export function ShiftFormPage() {
             />
           </label>
         </div>
+
+        <label className="field">
+          <span>Broj gostiju</span>
+          <input
+            type="number"
+            min="0"
+            step="1"
+            value={form.guests}
+            onChange={(e) => set("guests", Number(e.target.value))}
+          />
+        </label>
 
         <label className="field">
           <span>Lokal</span>

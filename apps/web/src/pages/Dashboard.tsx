@@ -72,7 +72,7 @@ export function Dashboard() {
                 <div className="shift__date">
                   <span className="shift__day">{dateHr(s.date)}</span>
                   <span className="muted shift__weekday">
-                    {weekdayHr(s.date)} · {s.startTime}–{s.endTime} · {hoursFmt(s.hours)}
+                    {weekdayHr(s.date)} · {s.startTime}–{s.endTime} · {hoursFmt(s.hours)} · {s.guests} gostiju
                     {s.venue ? ` · ${s.venue}` : ""}
                   </span>
                 </div>

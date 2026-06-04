@@ -9,6 +9,7 @@ export const shiftInputSchema = z.object({
   endTime: time,
   tipsCash: z.number().min(0).default(0),
   tipsCard: z.number().min(0).default(0),
+  guests: z.number().int().min(0).default(0),
   venue: z.string().max(120).optional(),
   note: z.string().max(500).optional(),
 });

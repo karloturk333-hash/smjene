@@ -15,6 +15,7 @@ async function main() {
     const endTime = i % 4 === 0 ? "00:30" : "23:00";
     const tipsCash = Math.round((15 + Math.random() * 35) * 100) / 100;
     const tipsCard = Math.round((10 + Math.random() * 25) * 100) / 100;
+    const guests = 20 + Math.floor(Math.random() * 60);
 
     await prisma.shift.create({
       data: {
@@ -24,6 +25,7 @@ async function main() {
         hours: computeHours(startTime, endTime),
         tipsCash,
         tipsCard,
+        guests,
         venue: VENUES[i % VENUES.length],
       },
     });

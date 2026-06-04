@@ -8,6 +8,7 @@ export interface Shift {
   hours: number;
   tipsCash: number;
   tipsCard: number;
+  guests: number;
   venue: string | null;
   note: string | null;
   createdAt: string;
@@ -32,6 +33,7 @@ export interface ShiftInput {
   endTime: string;
   tipsCash: number;
   tipsCard: number;
+  guests: number;
   venue?: string;
   note?: string;
 }
