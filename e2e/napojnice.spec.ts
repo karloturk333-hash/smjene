@@ -1,8 +1,15 @@
 import { test, expect } from "@playwright/test";
+import { login, DEMO } from "./helpers";
 
 // describe = "kutija" koja grupira povezane testove pod jednim imenom.
 test.describe("Napojnice — dashboard", () => {
   // Svaki test() dobije svjež "page" = nova prazna kartica browsera.
+
+  // Dashboard je sada iza prijave → prvo se logiramo kao seed demo korisnik
+  // (koji ima 14 zasijanih smjena). Tek onda testovi vide podatke.
+  test.beforeEach(async ({ page }) => {
+    await login(page, DEMO.email, DEMO.password);
+  });
 
   test("dashboard se učita: naslov + kartice + lista", async ({ page }) => {
     await page.goto("/"); // baseURL + "/" → http://localhost:5173/
