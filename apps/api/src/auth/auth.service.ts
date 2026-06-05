@@ -18,16 +18,26 @@ const toPublic = (u: { id: string; email: string; createdAt: Date }): PublicUser
 /** Bacamo je kad je email već registriran; ruta je mapira u 409. */
 export class EmailTakenError extends Error {}
 
-/** Registracija: email mora biti slobodan, lozinku hashiramo, kreiramo korisnika. */
+/**
+ * Registracija: hashiramo lozinku i kreiramo korisnika. Jedinstvenost emaila
+ * NE provjeravamo zasebnim upitom (to bi bio check-then-create race: dvije
+ * istovremene registracije istog emaila obje prođu provjeru). Umjesto toga se
+ * oslanjamo na UNIQUE indeks u bazi i hvatamo Prisma P2002 → 409. Atomarno.
+ */
 export async function registerUser(input: RegisterInput): Promise<PublicUser> {
-  const existing = await prisma.user.findUnique({ where: { email: input.email } });
-  if (existing) throw new EmailTakenError();
-
   const passwordHash = await hashPassword(input.password);
-  const user = await prisma.user.create({
-    data: { email: input.email, passwordHash },
-  });
-  return toPublic(user);
+  try {
+    const user = await prisma.user.create({
+      data: { email: input.email, passwordHash },
+    });
+    return toPublic(user);
+  } catch (e) {
+    // P2002 = kršenje unique ograničenja (email već postoji).
+    if (e && typeof e === "object" && (e as { code?: string }).code === "P2002") {
+      throw new EmailTakenError();
+    }
+    throw e;
+  }
 }
 
 /**

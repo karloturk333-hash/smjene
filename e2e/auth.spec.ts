@@ -57,6 +57,14 @@ test.describe("Auth — prijava, izolacija i zaštita ruta", () => {
     await expect(pageB.getByText("Još nema unesenih smjena.")).toBeVisible();
     await expect(pageB.getByText(venueA)).toHaveCount(0);
 
+    // Dodatno na API razini (ne samo UI): dohvati A-ovu smjenu kao A, pa potvrdi
+    // da je B NE može dohvatiti po id-u — server vraća 404 (IDOR zaštita).
+    const aList = await pageA.request.get("/api/shifts");
+    const aShift = (await aList.json()).find((s: { venue: string }) => s.venue === venueA);
+    expect(aShift?.id).toBeTruthy();
+    const bDirect = await pageB.request.get(`/api/shifts/${aShift.id}`);
+    expect(bDirect.status()).toBe(404);
+
     await ctxA.close();
     await ctxB.close();
   });
