@@ -7,6 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// Korisnik aplikacije (konobar). Svaka smjena pripada točno jednom korisniku.
+model User {
+  id           String    @id @default(cuid())
+  /// E-mail za prijavu — jedinstven.
+  email        String    @unique
+  /// bcrypt hash lozinke. NIKAD ne čuvamo samu lozinku.
+  passwordHash String
+  createdAt    DateTime  @default(now())
+
+  shifts   Shift[]
+  sessions Session[]
+}
+
+/// Aktivna prijava (server-side sesija). U bazi čuvamo HASH tokena, ne sam token.
+model Session {
+  id        String   @id @default(cuid())
+  /// SHA-256 hash random tokena koji živi u httpOnly kolačiću. Jedinstven.
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Trenutak isteka sesije.
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
 /// Jedna odrađena smjena konobara s pripadajućim napojnicama.
 model Shift {
   id        String   @id @default(cuid())
@@ -28,6 +55,11 @@ model Shift {
   note      String?
   /// Broj gostiju posluženih u smjeni.
   guests    Int      @default(0)
+  /// Vlasnik smjene — svaka smjena pripada točno jednom korisniku.
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

@@ -40,6 +40,10 @@ export interface ShiftInput {
 
 async function http<T>(url: string, opts?: RequestInit): Promise<T> {
   const res = await fetch(`/api${url}`, {
+    // credentials: "include" → preglednik šalje (i prima) kolačiće. Kroz Vite
+    // proxy je sve same-origin pa bi išlo i bez ovoga, ali eksplicitno je
+    // otpornije (npr. ako se ikad pređe na pravi cross-origin API).
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     ...opts,
   });
@@ -103,5 +107,66 @@ export function useDeleteShift() {
   return useMutation({
     mutationFn: (id: string) => http<void>(`/shifts/${id}`, { method: "DELETE" }),
     onSuccess: invalidate,
+  });
+}
+
+// ─── Auth ────────────────────────────────────────────────────────────────────
+
+export interface User {
+  id: string;
+  email: string;
+}
+
+export interface Credentials {
+  email: string;
+  password: string;
+}
+
+/**
+ * Dohvati trenutnog korisnika. VAŽNO: 401 (nisam prijavljen) NIJE greška nego
+ * legitimno stanje "user = null", pa ga ne bacamo — inače bi useQuery stalno bio
+ * u errored stanju za odjavljene korisnike.
+ */
+async function fetchMe(): Promise<User | null> {
+  const res = await fetch("/api/auth/me", { credentials: "include" });
+  if (res.status === 401) return null;
+  if (!res.ok) throw new Error(`Greška ${res.status}`);
+  const body = (await res.json()) as { user: User };
+  return body.user;
+}
+
+export function useMe() {
+  return useQuery({ queryKey: ["me"], queryFn: fetchMe });
+}
+
+export function useLogin() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (creds: Credentials) =>
+      http<{ user: User }>("/auth/login", { method: "POST", body: JSON.stringify(creds) }),
+    // Upisom u cache ["me"] odmah znamo tko je prijavljen, bez novog requesta.
+    onSuccess: (data) => qc.setQueryData(["me"], data.user),
+  });
+}
+
+export function useRegister() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (creds: Credentials) =>
+      http<{ user: User }>("/auth/register", { method: "POST", body: JSON.stringify(creds) }),
+    onSuccess: (data) => qc.setQueryData(["me"], data.user),
+  });
+}
+
+export function useLogout() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => http<void>("/auth/logout", { method: "POST" }),
+    onSuccess: () => {
+      // Očisti tuđe podatke iz cachea i postavi "nema korisnika".
+      qc.removeQueries({ queryKey: ["shifts"] });
+      qc.removeQueries({ queryKey: ["stats"] });
+      qc.setQueryData(["me"], null);
+    },
   });
 }
